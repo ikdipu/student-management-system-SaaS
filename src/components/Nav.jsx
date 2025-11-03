@@ -8,8 +8,8 @@ export default function Nav(){
 
 
     return(
-    	<div className="flex flex-col">
-	        <nav className="backdrop-blur-lg flex flex-col items-center justify-center h-16 w-full  sticky top-0 z-50 overflow-hidden">
+    	<div className="flex flex-col  sticky top-0 z-50">
+	        <nav className="backdrop-blur-lg flex flex-col items-center justify-center h-16 w-full  overflow-hidden">
 	            
 	            <div className="h-full w-9/12 flex items-center justify-between">
 	                <div>

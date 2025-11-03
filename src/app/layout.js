@@ -7,7 +7,7 @@ const gabarito = Gabarito({
 });
 
 export const metadata = {
-  title: "EduFlow",
+  title: "Somonnoy",
   description: "A student management app",
   manifest: "/manifest.json",
   icons: {

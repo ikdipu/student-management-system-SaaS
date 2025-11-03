@@ -41,7 +41,7 @@ export default function ResultsPage() {
       }
     }
     fetchData();
-  }, []);
+  }, [subjectFilter,totalMarksFilter]);
 
   // Filter by batch
   useEffect(() => {

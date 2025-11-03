@@ -1,7 +1,9 @@
+
 import Nav from "@/components/Nav";
 import Image from "next/image";
 import Link from "next/link";
 import {Check} from "lucide-react";
+
 
 
 export default function Home(){
@@ -13,8 +15,8 @@ export default function Home(){
             	<Nav />
             	<header className="w-full h-10/12 lg:h-11/12 flex flex-col gap-8 justify-center items-center">
             		<p className="secondary-font">Powered By <span className="primary-font font-bold">Loom Softwares</span></p>
-            		<h1 className="text-5xl lg:text-7xl primary-font text-center font-bold">Make Student Management <br/><span className="text-soft-red">10x</span> smoother</h1>
-            		<p className="secondary-font text-center text-lg lg:text-2xl">Focus on teaching while <span className="font-bold t-green hover:underline">Somonnoy</span> takes care of the management.</p>
+            		<h1 className="text-5xl md:6xl lg:text-7xl primary-font text-center font-bold">Make Student Management <br/><span className="text-soft-red italic">10x</span> smoother</h1>
+            		<p className="secondary-font text-center md:text-lg w-[70%] lg:text-2xl">Focus on teaching while <span className="font-bold t-green hover:underline">Somonnoy</span> takes care of the management.</p>
             		<div className="secondary-font flex flex-col gap-3">
             			<ul>
             				<li className="flex gap-2 items-center">
@@ -62,7 +64,7 @@ export default function Home(){
                 				</li>
                 				<li className="flex gap-2 items-center">
                 					<Image src="/cross.svg" alt="cross" width={10} height={10} />
-                					Can’t make changes from anywhere else
+                					Can&apos;t make changes from anywhere else
                 				</li>
                 				<li className="flex gap-2 items-center">
                 					<Image src="/cross.svg" alt="cross" width={10} height={10} />
@@ -101,11 +103,11 @@ export default function Home(){
             		<div>
             			<p className="border text-center border-dashed rounded-xl border-sky-400 p-2">✨ Launch Discount - Free/2 months ✨</p>
             		</div>
-            		<h1 className="text-2xl md:text-4xl lg:text-5xl font-bold primary-font text-center">Stop Wasting Hours<br/> Managing your coaching</h1>
+            		<h1 className="text-2xl md:text-4xl mb-6 lg:text-5xl font-bold primary-font text-center">Stop Wasting Hours<br/> Managing your coaching</h1>
             	   <div className="flex flex-col gap-10 lg:flex-row">
                        {/*2 months free*/}
                         <div className="bg-gray-50 p-10 rounded-xl">
-                            <h1 className="text-4xl mb-10 primary-font font-bold"><span className="text-sm secondary-font line-through">1000 ৳</span> 0 ৳ <span className="font-normal secondary-font text-lg">/ 2 months</span></h1>
+                            <h1 className="text-4xl mb-10 primary-font font-bold"><span className="text-sm secondary-font line-through">999 ৳</span> 0 ৳ <span className="font-normal secondary-font text-lg">/ 2 months</span></h1>
                             <div>
                                 <ul className="secondary-font flex flex-col gap-4">
                                     <li className="flex items-center gap-2">
@@ -134,7 +136,7 @@ export default function Home(){
                             <span className="relative -top-15 left-23 -transl-x-1/2 bg-green text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
                                 Most Popular
                             </span>
-                            <h1 className="text-4xl mb-10 primary-font font-bold"><span className="text-sm secondary-font line-through">6000 ৳</span> 5000 ৳ <span className="font-normal secondary-font text-lg">/ 6 months</span></h1>
+                            <h1 className="text-4xl mb-10 primary-font font-bold"><span className="text-sm secondary-font line-through">5999 ৳</span> 4999 ৳ <span className="font-normal secondary-font text-lg">/ 6 months</span></h1>
                             <div>
                                 <ul className="secondary-font flex flex-col gap-4">
                                     <li className="flex items-center gap-2">
@@ -160,6 +162,41 @@ export default function Home(){
                         </div>
                     </div>
                 </div>
+
+
+            {/*footer*/}
+                <footer className="lg:py-20 py-18 px-8 lg:px-18 w-full bg-[#EFF2F5]">
+                    <div className="flex flex-col lg:flex-row items-center gap-10 justify-between">
+                        <div className="flex flex-col items-center lg:items-start gap-3">
+                            <div className="flex items-center gap-2">
+                                <Image src="/logo.svg" alt="logo" width={25} height={25} />
+                                <h1 className="font-bold primary-font text-lg">Somonnoy</h1>
+                            </div>
+                            <div>
+                                <p className="text-center lg:text-left mb-4 text-sm w-45 secondary-font">Student management made easy. Digitally manage you students and publish results via sms with many more features.</p>
+                                <p className="text-center text-sm font-semibold secondary-font">Copyright © 2025. All rights reserved.</p>
+
+                            </div>
+                        </div>
+                        <div>
+                            <h1 className="text-soft mb-4 text-center lg:text-left">Links</h1>
+                            <div className="flex flex-col gap-2 text-sm secondary-font items-start">
+                                <Link className="hover:underline" href="/">Home</Link>
+                                <Link className="hover:underline" href="#pricing">Pricing</Link>
+                                <Link className="hover:underline" href="/about">About Us</Link>
+                                <Link className="hover:underline" href="/dashboard">Dashboard</Link>
+                            </div>
+                        </div>
+                        <div>
+                            <h1 className="text-soft mb-4 text-center lg:text-left">Legal</h1>
+                            <div className="flex flex-col gap-2 text-sm secondary-font items-center lg:items-start">
+                                <Link href="/">Terms of services</Link>
+                                <Link href="/">Privacy policy</Link>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </footer>
             </div>
         </div>
     )
