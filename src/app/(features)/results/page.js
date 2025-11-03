@@ -123,7 +123,7 @@ export default function ResultsPage() {
           </h1>
           <p className="text-gray-600 max-w-3xl mx-auto lg:mx-0">
             Enter obtained marks for each student. Subject and total marks apply
-            to all students. Empty fields will be marked as "Absent".
+            to all students. Empty fields will be marked as Absent.
           </p>
         </div>
 
