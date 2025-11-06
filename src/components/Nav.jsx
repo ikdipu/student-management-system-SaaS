@@ -16,10 +16,12 @@ export default function Nav(){
 	                	<Link href="/"><Image src="/logo.svg" alt="logo" width={40} height={40}/></Link>
 	                </div>
 	                <div className="hidden lg:flex gap-8 secondary-font">
-	                	<Link className="hover:underline" href="/">Home</Link>
+	                	
 	                	<Link className="hover:underline" href="#pricing">Pricing</Link>
 	                	<Link className="hover:underline" href="/about">About Us</Link>
 	                	<Link className="hover:underline" href="/dashboard">Dashboard</Link>
+	                	<Link className="hover:underline" href="/gportal">Guardian Portal</Link>
+
 	                </div>
 	                <div>
 	                	<Link className="hidden lg:flex" href="/"><button className="p-2 py-1 cursor-pointer text-white rounded shadow-md bg-green">Login</button></Link>
@@ -34,10 +36,11 @@ export default function Nav(){
 	        {mobileScreen && (
 	            <div className="lg:hidden h-screen mt-10 text-xl flex flex-col items-center gap-6">
 	            	<div className="flex flex-col gap-4 items-center">
-	            		     <Link onClick={() => setMobileScreen(false)} className="hover:underline" href="/">Home</Link>
 					      	<Link onClick={() => setMobileScreen(false)} className="hover:underline" href="#pricing">Pricing</Link>
 					      	<Link onClick={() => setMobileScreen(false)} className="hover:underline" href="/about">About Us</Link>
 					      	<Link onClick={() => setMobileScreen(false)} className="hover:underline" href="/dashboard">Dashboard</Link>
+					      	<Link onClick={() => setMobileScreen(false)} className="hover:underline" href="/gportal">Guardian Portal</Link>
+
 	            	</div>
 	            	<Link href="/sign-in">
             			<button  className="flex gap-2 cursor-pointer px-12 py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">

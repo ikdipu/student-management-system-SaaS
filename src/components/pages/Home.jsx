@@ -198,7 +198,7 @@ export default function Home(){
                             </div>
                             <div className="flex flex-col items-center lg:items-start">
                                 <p className="text-center lg:text-left mb-4 text-sm w-45 secondary-font">Student management made easy. Digitally manage you students and publish results via sms with many more features.</p>
-                                <p className="text-center text-sm font-semibold secondary-font">Copyright © 2025. All rights reserved.</p>
+                                <p className="text-center text-sm font-semibold secondary-font">Copyright © {new Date().getFullYear()}. All rights reserved.</p>
                             </div>
                         </div>
                         <div>
@@ -208,6 +208,7 @@ export default function Home(){
                                 <Link className="hover:underline" href="#pricing">Pricing</Link>
                                 <Link className="hover:underline" href="/about">About Us</Link>
                                 <Link className="hover:underline" href="/dashboard">Dashboard</Link>
+                                <Link className="hover:underline" href="/gportal">Guardian Portal</Link>
                             </div>
                         </div>
                         <div>
