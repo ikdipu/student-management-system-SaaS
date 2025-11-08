@@ -24,7 +24,7 @@ export default function Nav(){
 
 	                </div>
 	                <div>
-	                	<Link className="hidden lg:flex" href="/"><button className="p-2 py-1 cursor-pointer text-white rounded shadow-md bg-green">Login</button></Link>
+	                	<Link className="hidden lg:flex" href="/sign-in"><button className="p-2 py-1 cursor-pointer text-white rounded shadow-md bg-green">Login</button></Link>
 	                </div>
 
 	            {/*mobile version*/}
