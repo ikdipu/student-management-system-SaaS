@@ -5,22 +5,28 @@ import { MongoClient, ObjectId } from 'mongodb';
 import ExcelJS from 'exceljs';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
+import { Redis } from '@upstash/redis';
 
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
 if (!uri || !dbName) throw new Error('Missing MongoDB config');
 
+// MongoDB client
 const client = new MongoClient(uri);
 const clientPromise = client.connect();
+
+// Redis client
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export async function GET() {
   try {
     // --- Auth ---
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     let decoded;
     try {
@@ -34,7 +40,29 @@ export async function GET() {
       return NextResponse.json({ error: 'Invalid user' }, { status: 401 });
     }
 
-    // --- DB ---
+    // --- Redis cache key ---
+    const cacheKey = `students_excel:${userId}`;
+
+
+    const cachedBuffer = await redis.get(cacheKey);
+    if (cachedBuffer) {
+      const buffer = Buffer.from(cachedBuffer, 'base64');
+      const currentMonth = new Date()
+        .toLocaleString('default', { month: 'long', year: 'numeric' })
+        .replace(' ', '_');
+
+      return new NextResponse(buffer, {
+        status: 200,
+        headers: {
+          'Content-Type':
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'Content-Disposition': `attachment; filename=students_export_${currentMonth}.xlsx`,
+          'X-Cache': 'HIT',
+        },
+      });
+    }
+
+    
     const db = (await clientPromise).db(dbName);
     const studentsCol = db.collection('students');
     const batchesCol = db.collection('batches');
@@ -47,7 +75,6 @@ export async function GET() {
       return NextResponse.json({ error: 'No students found' }, { status: 404 });
     }
 
-    // collect unique batch IDs
     const batchIds = [
       ...new Set(students.map((s) => s.batch_id).filter(Boolean)),
     ].map((id) => new ObjectId(id));
@@ -56,23 +83,19 @@ export async function GET() {
       ? await batchesCol.find({ _id: { $in: batchIds } }).toArray()
       : [];
 
-    // --- Excel ---
+   
     const workbook = new ExcelJS.Workbook();
 
-    // function to safely add a sheet
     const createSheet = (name) => {
-      const safeName = name
-        .replace(/[\\/*?:\[\]<>|"]/g, '_')
-        .substring(0, 31);
+      const safeName = name.replace(/[\\/*?:\[\]<>|"]/g, '_').substring(0, 31);
       return workbook.addWorksheet(safeName);
     };
 
-    // --- Create batch sheets ---
+    // Batch sheets
     for (const batch of batches) {
       const batchStudents = students.filter(
         (s) => s.batch_id?.toString() === batch._id.toString()
       );
-
       const sheet = createSheet(batch.batch_name || 'Unnamed Batch');
 
       sheet.addRow([
@@ -101,12 +124,9 @@ export async function GET() {
         ]);
       }
 
-      // style header
       const header = sheet.getRow(1);
       header.font = { bold: true };
       header.alignment = { vertical: 'middle', horizontal: 'center' };
-
-      // auto width
       sheet.columns.forEach((col) => {
         let max = 15;
         col.eachCell({ includeEmpty: true }, (cell) => {
@@ -117,7 +137,7 @@ export async function GET() {
       });
     }
 
-    // --- Add "Unassigned Students" sheet (if any) ---
+    // Unassigned students
     const unassigned = students.filter((s) => !s.batch_id);
     if (unassigned.length) {
       const sheet = createSheet('Unassigned Students');
@@ -148,7 +168,7 @@ export async function GET() {
       sheet.getRow(1).font = { bold: true };
     }
 
-    // --- Payment Updates ---
+    
     const currentMonth = new Date()
       .toLocaleString('default', { month: 'long', year: 'numeric' })
       .replace(' ', '_');
@@ -157,14 +177,15 @@ export async function GET() {
       { createdBy: new ObjectId(userId), payment_status: false },
       { $addToSet: { due_months: currentMonth } }
     );
-
     await studentsCol.updateMany(
       { createdBy: new ObjectId(userId) },
       { $set: { payment_status: false } }
     );
 
-    // --- Return Excel File ---
     const buffer = await workbook.xlsx.writeBuffer();
+
+    
+    await redis.set(cacheKey, buffer.toString('base64'), { ex: 600 });
 
     return new NextResponse(buffer, {
       status: 200,
@@ -172,6 +193,7 @@ export async function GET() {
         'Content-Type':
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': `attachment; filename=students_export_${currentMonth}.xlsx`,
+        'X-Cache': 'MISS',
       },
     });
   } catch (err) {

@@ -1,5 +1,13 @@
 import { MongoClient, ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
+import jwt from "jsonwebtoken";
+import { Redis } from "@upstash/redis";
+
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export async function PATCH(req, { params }) {
   const { id } = await params;
@@ -8,17 +16,36 @@ export async function PATCH(req, { params }) {
     return new Response(JSON.stringify({ error: "Invalid ID" }), { status: 400 });
   }
 
+
+  const token = req.cookies.get("token")?.value;
+  if (!token) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+  }
+
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "Invalid token" }), { status: 401 });
+  }
+
   try {
     const client = await clientPromise;
     const db = client.db(process.env.MONGODB_DB);
     const collection = db.collection("students");
 
-    const student = await collection.findOne({ _id: new ObjectId(id) });
+
+    const student = await collection.findOne({
+      _id: new ObjectId(id),
+      createdBy: new ObjectId(decoded.userId),
+    });
+
     if (!student) {
       return new Response(JSON.stringify({ error: "Student not found" }), { status: 404 });
     }
 
-    // Get current date in dd-mm-yy
+
     const now = new Date();
     const day = String(now.getDate()).padStart(2, "0");
     const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -35,11 +62,10 @@ export async function PATCH(req, { params }) {
         updatedPaidMonths.push(paymentDate);
       }
       updatedDueMonths = updatedDueMonths.filter((m) => m !== paymentDate);
-
-      console.log(`Payment received for ${student.name} on ${paymentDate}`);
+      console.log(`✅ Payment received for ${student.name} on ${paymentDate}`);
     }
 
-    const updateResult = await collection.updateOne(
+    await collection.updateOne(
       { _id: new ObjectId(id) },
       {
         $set: {
@@ -52,9 +78,13 @@ export async function PATCH(req, { params }) {
 
     const updatedStudent = await collection.findOne({ _id: new ObjectId(id) });
 
+    
+    const cacheKey = `students:${decoded.userId}`;
+    await redis.del(cacheKey);
+
     return new Response(JSON.stringify(updatedStudent), { status: 200 });
   } catch (err) {
-    console.error(err);
+    console.error("PATCH error:", err);
     return new Response(JSON.stringify({ error: "Failed to update student" }), { status: 500 });
   }
 }

@@ -2,38 +2,69 @@ import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
+import { Redis } from "@upstash/redis";
+
+// --- Redis client setup ---
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 function MarksTemplate(name, total, subject, obtainedMarks) {
   return `Dear ${name},  
 Your ${subject} exam results have been published.  
-Total Marks: ${total} 
+Total Marks: ${total}  
 Obtained Marks: ${obtainedMarks} \n`;
 }
 
+
+// i will forget the algorithm next day. so please no one should touch this formating function
 function formatPhoneNumber(phone) {
-  phone = phone.replace(/\s+/g, "").replace(/-/g, "");
-  if (phone.startsWith("+880")) return phone.slice(1);
-  if (phone.startsWith("0")) return "88" + phone;
-  if (phone.startsWith("880")) return phone;
-  throw new Error("Invalid phone number format");
+  if (!phone) throw new Error("Phone number is required");
+
+  //Remove spaces, dashes, and parentheses
+  phone = phone.replace(/[\s\-\(\)]/g, "");
+
+  // change format to different types of number method
+  if (phone.startsWith("+880")) {
+    // e.g. +8801727932635 → 8801727932635
+    return phone.slice(1);
+  } else if (phone.startsWith("880")) {
+    // e.g. 8801727932635 → 8801727932635 (already fine)
+    return phone;
+  } else if (phone.startsWith("0")) {
+    // e.g. 01727932635 → 8801727932635
+    return "88" + phone;
+  } else if (/^1\d{9}$/.test(phone)) {
+    // e.g. 1727932635 → 8801727932635
+    return "880" + phone;
+  }
+
+  throw new Error("Invalid Bangladeshi phone number format");
 }
 
 export async function POST(req) {
   let students;
   try {
     students = await req.json();
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Cannot parse JSON" }, { status: 400 });
   }
 
   const token = req.cookies.get("token")?.value;
-  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!token)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  let decoded;
   try {
-    jwt.verify(token, process.env.JWT_SECRET);
-  } catch (err) {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
+
+  const userId = decoded?.userId;
+  if (!userId)
+    return NextResponse.json({ error: "Invalid user" }, { status: 401 });
 
   try {
     const client = await clientPromise;
@@ -43,8 +74,7 @@ export async function POST(req) {
     const smsResults = [];
 
     for (const s of students) {
-      if (!s.marks || s.marks.length === 0) continue; // skip if no marks
-      if (!s.phone_number) continue; // skip if no phone number
+      if (!s.marks?.length || !s.phone_number) continue; // skip invalid entries
 
       const mark = s.marks[0];
       const phone = formatPhoneNumber(s.phone_number);
@@ -63,10 +93,10 @@ export async function POST(req) {
           {
             $set: {
               marks: {
-                $concatArrays: [{ $ifNull: ["$marks", []] }, s.marks]
-              }
-            }
-          }
+                $concatArrays: [{ $ifNull: ["$marks", []] }, s.marks],
+              },
+            },
+          },
         ]
       );
 
@@ -81,21 +111,37 @@ export async function POST(req) {
         const response = await fetch("https://api.sms.net.bd/sendsms", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formData
+          body: formData,
         });
 
         const result = await response.text();
-        console.log(`✅ SMS sent to ${phone}: ${result}`);
+        console.log(`SMS sent to ${phone}: ${result}`);
         smsResults.push({ phone, success: true, result });
       } catch (err) {
-        console.error(`❌ Failed to send SMS to ${phone}:`, err);
+        console.error(`Failed to send SMS to ${phone}:`, err);
         smsResults.push({ phone, success: false, error: err.message });
       }
     }
 
-    return NextResponse.json({ success: true, message: "✅ Marks added & SMS sent!", smsResults });
+    // --- Invalidate Redis cache for this user ---
+    try {
+      await redis.del(`students_list:${userId}`);
+      await redis.del(`students_excel:${userId}`);
+      console.log(`Redis cache cleared for user ${userId}`);
+    } catch (err) {
+      console.warn("Failed to clear Redis cache:", err.message);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Marks added & SMS sent!",
+      smsResults,
+    });
   } catch (err) {
     console.error("Error saving results:", err);
-    return NextResponse.json({ error: "❌ Failed to save results" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to save results" },
+      { status: 500 }
+    );
   }
 }

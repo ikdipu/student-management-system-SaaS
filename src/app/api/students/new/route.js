@@ -3,6 +3,13 @@ import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import jwt from "jsonwebtoken";
+import { Redis } from "@upstash/redis";
+
+// initialize redis for caching
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export async function POST(req) {
   let student;
@@ -39,6 +46,10 @@ export async function POST(req) {
 
   try {
     await collection.insertOne(student);
+
+    // invalidate redis cache
+    const cacheKey =  `students:${decoded.userId}`;
+    await redis.del(cacheKey);
   } catch (err) {
     return NextResponse.json({ error: "Cannot insert student" }, { status: 500 });
   }

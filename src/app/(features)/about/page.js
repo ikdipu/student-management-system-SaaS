@@ -51,7 +51,7 @@ export default function AboutPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24 text-center relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-gradient-to-b from-blue-50 to-transparent opacity-50 rounded-full blur-3xl"></div>
         <h1 className="text-3xl primary-font sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 relative z-10">
-          About <span className="text-emerald-500">Somonnoy</span>
+          About <span className="text-emerald-500">Studify</span>
         </h1>
         <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed relative z-10 px-4">
           A dedicated team of engineers, designers, and educators working to transform educational management through innovative technology and enterprise-grade solutions.
@@ -155,7 +155,7 @@ export default function AboutPage() {
         <div className="flex justify-center">
         <Link href="/sign-up">
                   <button  className="flex gap-2 cursor-pointer px-12 py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">
-                  Get Somonnoy
+                  Get Studify
                   <Image src="/plane.svg" width={15} height={15} alt="plane"/>
                   </button>
         </Link>

@@ -5,22 +5,30 @@ import Image from 'next/image'
 import { useEffect, useState } from "react";
 import { Users, CreditCard, BarChart3, MessageSquare, Bell, GraduationCap, CheckCircle, ArrowRight, Menu, X, Info, Rocket } from "lucide-react";
 
-import Home from "@/components/pages/Home";
+import dynamic from "next/dynamic";
+// lazy loading home component
+const Home = dynamic(() => import("@/components/pages/Home"), {
+  loading: () => (
+    <div className="flex justify-center items-center min-h-screen">
+      <p className="text-gray-500">Loading...</p>
+    </div>
+  ),
+});
 
 
 // CONFIGURATION OBJECT - Change your branding and content here
 const CONFIG = {
   branding: {
-    name: "EduFlow",
+    name: "Studify",
     logo: "/logo.png", // Change to your logo image path, or set to null to use icon + text
     useTextLogo: true, // Set to false if you want to use an image logo
     tagline: "Manage coaching easily.",
-    description: "Focus on teaching while EduFlow takes care of the management."
+    description: "Focus on teaching while Studify takes care of the management."
   },
   hero: {
-    title: "EduFlow - Manage coaching",
+    title: "Studify - Manage coaching",
     highlightedWord: "easily",
-    subtitle: "Focus on teaching while EduFlow takes care of the management.",
+    subtitle: "Focus on teaching while Studify takes care of the management.",
     features: [
       "Student Management",
       "Payment Tracking",
@@ -59,13 +67,10 @@ export default function HomePage() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-100 border-t-blue-500"></div>
-          <p className="text-gray-600 mt-4">Loading...</p>
-        </div>
-      </div>
-    );
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <p className="text-gray-500 animate-pulse">Checking your session...</p>
+    </div>
+  );
 
   if (user) {
     return (

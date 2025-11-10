@@ -16,7 +16,7 @@ export default function Home(){
             	<header className="w-full h-10/12 lg:h-11/12 flex flex-col gap-8 justify-center items-center">
             		<p className="secondary-font">Powered By <span className="primary-font font-bold">Loom Softwares</span></p>
             		<h1 className="text-5xl md:6xl lg:text-7xl primary-font text-center font-bold">Make Student Management <br/><span className="text-soft-red italic">10x</span> smoother</h1>
-            		<p className="secondary-font text-center md:text-lg w-[70%] lg:text-2xl">Focus on teaching while <span className="font-bold t-green hover:underline">Somonnoy</span> takes care of the management.</p>
+            		<p className="secondary-font text-center md:text-lg w-[70%] lg:text-2xl">Focus on teaching while <span className="font-bold t-green hover:underline">Studify</span> takes care of the management.</p>
             		<div className="secondary-font flex flex-col gap-3">
             			<ul>
             				<li className="flex gap-2 items-center">
@@ -35,7 +35,7 @@ export default function Home(){
             		</div>
             		<Link href="/sign-up">
             			<button  className="flex gap-2 cursor-pointer px-12 py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">
-            			Get Somonnoy
+            			Get Studify
             			<Image src="/plane.svg" width={15} height={15} alt="plane"/>
             			</button>
             		</Link>
@@ -47,7 +47,7 @@ export default function Home(){
 
                 {/* features section */}
                 <div id="learnMore" className="flex flex-col items-center">
-                	<h2 className="text-2xl lg:text-4xl text-center font-bold primary-font mb-20">Why Choose <span className="t-green">Somonnoy</span>?</h2>
+                	<h2 className="text-2xl lg:text-4xl text-center font-bold primary-font mb-20">Why Choose <span className="t-green">Studify</span>?</h2>
 				
                 	<div className="flex flex-col lg:flex-row items-center gap-8 md:gap-12">
                 	{/*red*/}
@@ -74,7 +74,7 @@ export default function Home(){
                 		</div>
                 	{/*green*/}
                 		<div className="bg-emerald-100/70 text-emerald-700 w-[80%] lg:w-auto p-8 md:p-12 rounded-lg">
-                			<h2 className="font-bold text-lg mb-4">With Somonnoy</h2>
+                			<h2 className="font-bold text-lg mb-4">With Studify</h2>
                 			<ul className="list-disc list-inside space-y-1.5">
                 				<li className="flex gap-2 items-center">
                 					<Image src="/small-tick.svg" alt="cross" width={10} height={10} />
@@ -125,7 +125,7 @@ export default function Home(){
                                 </ul>
                                 <Link href="/sign-up">
                                     <button  className="flex mt-10 gap-2 cursor-pointer w-full justify-center mx-auto py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">
-                                    Get Somonnoy
+                                    Get Studify
                                     <Image src="/plane.svg" width={15} height={15} alt="plane"/>
                                     </button>
                                 </Link>
@@ -152,7 +152,7 @@ export default function Home(){
                                 </ul>
                                 <Link href="/sign-up">
                                     <button  className="flex mt-10 gap-2 cursor-pointer w-full justify-center mx-auto py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">
-                                    Get Somonnoy
+                                    Get Studify
                                     <Image src="/plane.svg" width={15} height={15} alt="plane"/>
                                     </button>
                                 </Link>
@@ -178,7 +178,7 @@ export default function Home(){
                                 </ul>
                                 <Link href="/sign-up">
                                     <button  className="flex mt-10 gap-2 cursor-pointer w-full justify-center mx-auto py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">
-                                    Get Somonnoy
+                                    Get Studify
                                     <Image src="/plane.svg" width={15} height={15} alt="plane"/>
                                     </button>
                                 </Link>
@@ -194,7 +194,7 @@ export default function Home(){
                         <div className="flex flex-col items-center lg:items-start gap-3">
                             <div className="flex items-center gap-2">
                                 <Image src="/logo.svg" alt="logo" width={25} height={25} />
-                                <h1 className="font-bold primary-font text-lg">Somonnoy</h1>
+                                <h1 className="font-bold primary-font text-lg">Studify</h1>
                             </div>
                             <div className="flex flex-col items-center lg:items-start">
                                 <p className="text-center lg:text-left mb-4 text-sm w-45 secondary-font">Student management made easy. Digitally manage you students and publish results via sms with many more features.</p>
