@@ -159,7 +159,7 @@ export default function Home(){
                                        <p>Database for 150 students</p>
                                     </li>
                                 </ul>
-                                <Link onClick={handleGetStudifyClickForPosthog} href="/sign-up"}>
+                                <Link onClick={handleGetStudifyClickForPosthog} href="/sign-up">
                                     <button  className="flex mt-10 gap-2 cursor-pointer w-full justify-center mx-auto py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">
                                     Get Studify
                                     <Image src="/plane.svg" width={15} height={15} alt="plane"/>
