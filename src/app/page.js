@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
 import Link from "next/link";
-import Image from 'next/image'
+import Image from 'next/image';
 import { useEffect, useState } from "react";
-import { Users, CreditCard, BarChart3, MessageSquare, Bell, GraduationCap, CheckCircle, ArrowRight, Menu, X, Info, Rocket } from "lucide-react";
-
+import { GraduationCap, ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
-// lazy loading home component
+import posthog from "@/app/instrumentation-client"; // ✅ import PostHog instance
+
 const Home = dynamic(() => import("@/components/pages/Home"), {
   loading: () => (
     <div className="flex justify-center items-center min-h-screen">
@@ -15,15 +15,13 @@ const Home = dynamic(() => import("@/components/pages/Home"), {
   ),
 });
 
-
-// CONFIGURATION OBJECT - Change your branding and content here
 const CONFIG = {
   branding: {
     name: "Studify",
-    logo: "/logo.png", // Change to your logo image path, or set to null to use icon + text
-    useTextLogo: true, // Set to false if you want to use an image logo
+    logo: "/logo.png",
+    useTextLogo: true,
     tagline: "Manage coaching easily.",
-    description: "Focus on teaching while Studify takes care of the management."
+    description: "Focus on teaching while Studify takes care of the management.",
   },
   hero: {
     title: "Studify - Manage coaching",
@@ -33,15 +31,14 @@ const CONFIG = {
       "Student Management",
       "Payment Tracking",
       "Batch Tracking",
-      "Exam results and payments via SMS"
-    ]
+      "Exam results and payments via SMS",
+    ],
   },
 };
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -50,6 +47,13 @@ export default function HomePage() {
         const data = await res.json();
         if (data.loggedIn) {
           setUser(data.user);
+          posthog.identify(data.user.id, {  // ✅ identify user after login
+            name: data.user.name,
+            email: data.user.email,
+            plan: data.user.plan,
+          });
+        } else {
+          posthog.capture("unauthenticated_home_visit"); // ✅ track guest visits
         }
       } catch (err) {
         console.error("Error checking auth:", err);
@@ -58,24 +62,26 @@ export default function HomePage() {
       }
     };
     fetchUser();
+
+    posthog.capture("home_page_loaded"); // ✅ track page load
   }, []);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    posthog.capture("user_logged_out", { user: user?.email }); // ✅ track logout
     window.location.reload();
   };
 
   if (loading)
     return (
-    <div className="flex items-center justify-center min-h-screen bg-white">
-      <p className="text-gray-500 animate-pulse">Checking your session...</p>
-    </div>
-  );
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <p className="text-gray-500 animate-pulse">Checking your session...</p>
+      </div>
+    );
 
   if (user) {
     return (
       <div className="min-h-screen bg-gray-50">
-        {/* Navigation */}
         <nav className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -102,6 +108,7 @@ export default function HomePage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/upgrade"
+                  onClick={() => posthog.capture("clicked_upgrade_button")} // ✅ track button click
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-sm"
                 >
                   Purchase
@@ -117,7 +124,6 @@ export default function HomePage() {
           </div>
         </nav>
 
-        {/* Welcome Content */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12">
             <div className="text-center mb-8">
@@ -130,6 +136,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10">
               <Link
                 href="/dashboard"
+                onClick={() => posthog.capture("visited_dashboard")}
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
               >
                 Go to Dashboard
@@ -143,7 +150,6 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* User Info Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="bg-blue-50 rounded-xl p-5 text-center">
                 <p className="text-gray-600 text-sm mb-1">Current Plan</p>
@@ -164,7 +170,5 @@ export default function HomePage() {
     );
   }
 
-  return (
-        <Home />
-    );
+  return <Home />;
 }

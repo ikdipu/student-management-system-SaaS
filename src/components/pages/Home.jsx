@@ -1,12 +1,21 @@
-
+"use client"
+import {useEffect} from "react";
 import Nav from "@/components/Nav";
 import Image from "next/image";
 import Link from "next/link";
 import {Check} from "lucide-react";
+import posthog from "posthog-js";
+
 
 
 
 export default function Home(){
+    useEffect(() => {
+        posthog.capture("home_page_view");
+    }, [])
+    const handleGetStudifyClickForPosthog(){
+        posthog.capture("get_studify_clicked", { location: "home_hero" });
+    }
     return (
         <div>
             
@@ -33,7 +42,7 @@ export default function Home(){
             				</li>
             			</ul>
             		</div>
-            		<Link href="/sign-up">
+            		<Link onClick={handleGetStudifyClickForPosthog} href="/sign-up">
             			<button  className="flex gap-2 cursor-pointer px-12 py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">
             			Get Studify
             			<Image src="/plane.svg" width={15} height={15} alt="plane"/>
@@ -123,7 +132,7 @@ export default function Home(){
                                        <p>Database for 80 students</p>
                                     </li>
                                 </ul>
-                                <Link href="/sign-up">
+                                <Link onClick={handleGetStudifyClickForPosthog} href="/sign-up">
                                     <button  className="flex mt-10 gap-2 cursor-pointer w-full justify-center mx-auto py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">
                                     Get Studify
                                     <Image src="/plane.svg" width={15} height={15} alt="plane"/>
@@ -150,7 +159,7 @@ export default function Home(){
                                        <p>Database for 150 students</p>
                                     </li>
                                 </ul>
-                                <Link href="/sign-up">
+                                <Link onClick={handleGetStudifyClickForPosthog} href="/sign-up"}>
                                     <button  className="flex mt-10 gap-2 cursor-pointer w-full justify-center mx-auto py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">
                                     Get Studify
                                     <Image src="/plane.svg" width={15} height={15} alt="plane"/>
@@ -176,7 +185,7 @@ export default function Home(){
                                        <p>Database fore more than 150 students</p>
                                     </li>
                                 </ul>
-                                <Link href="/sign-up">
+                                <Link onClick={handleGetStudifyClickForPosthog} href="/sign-up">
                                     <button  className="flex mt-10 gap-2 cursor-pointer w-full justify-center mx-auto py-3 rounded-md text-white bg-green hover:bg-green-dark hover:gap-4">
                                     Get Studify
                                     <Image src="/plane.svg" width={15} height={15} alt="plane"/>
