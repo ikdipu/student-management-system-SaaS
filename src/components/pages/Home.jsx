@@ -34,6 +34,10 @@ export default function Home() {
             <ul>
               <li className="flex gap-2 items-center">
                 <Image src="/tick.svg" alt="tick mark" width={15} height={15} />
+                <p className="md:text-l">Attendance & Absent Reminder</p>
+              </li>
+              <li className="flex gap-2 items-center">
+                <Image src="/tick.svg" alt="tick mark" width={15} height={15} />
                 <p className="md:text-l">Student & payment management</p>
               </li>
               <li className="flex gap-2 items-center">
