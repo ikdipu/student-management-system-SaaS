@@ -13,7 +13,7 @@ export default function Nav(){
 	            
 	            <div className="h-full w-9/12 flex items-center justify-between">
 	                <div>
-	                	<Link href="/"><Image src="/logo.svg" alt="logo" width={40} height={40}/></Link>
+	                	<Link href="/"><span className="font-bold t-green text-2xl">Studify</span></Link>
 	                </div>
 	                <div className="hidden lg:flex gap-8 secondary-font">
 	                	
