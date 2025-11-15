@@ -246,7 +246,10 @@ export default function StudentDetails() {
                   const res = await fetch(`/api/student/remove-due/${slug}`, {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ months: selectedDueMonths }),
+                    body: JSON.stringify({ 
+                      id: student._id,
+                      months: selectedDueMonths,
+                     }),
                   });
 
                   if (res.ok) {
