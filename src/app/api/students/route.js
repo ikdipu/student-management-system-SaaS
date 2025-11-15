@@ -46,7 +46,7 @@ export async function GET() {
     // Try fetching from Redis cache
     const cachedStudents = await redis.get(cacheKey);
     if (cachedStudents) {
-      console.log("HIT")
+
       return new Response(JSON.stringify(cachedStudents), {
         status: 200,
         headers: {
@@ -65,7 +65,7 @@ export async function GET() {
       .toArray();
 
     // Cache the result in Redis for 1 day (86400 seconds)
-    await redis.set(cacheKey, students, { ex: 86400 });
+    await redis.set(cacheKey, JSON.stringify(students), { ex: 86400 });
     console.log("store")
     return new Response(JSON.stringify(students), {
       status: 200,
